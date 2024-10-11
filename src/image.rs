@@ -10,7 +10,7 @@ use leptos_meta::Link;
 /// Image component for rendering optimized static images.
 /// Images MUST be static. Will not work with dynamic images.
 #[component]
-pub fn Image(
+pub fn Image<'a>(
     /// Image source. Should be path relative to root.
     #[prop(into)]
     src: String,
@@ -23,10 +23,10 @@ pub fn Image(
     quality: u8,
     /// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
     #[prop(default = "catmullrom")]
-    filter: impl Into<Filter>,
+    filter: &'a str,
     /// Resize type for the conversion : Fit, Fill, Cover
     #[prop(default = "fit")]
-    resize_type: impl Into<ResizeType>,
+    resize_type: &'a str,
     /// Will add blur image to head if true.
     #[prop(default = false)]
     blur: bool,
@@ -67,10 +67,10 @@ pub fn Image(
             src: src.clone(),
             option: CachedImageOption::Resize(Resize {
                 quality,
-                filter: filter.into(),
+                filter: filter.parse().unwrap_or_default(),
                 width,
                 height,
-                resize_type: resize_type.into(),
+                resize_type: resize_type.parse().unwrap_or_default(),
             }),
         }
     };
