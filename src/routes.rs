@@ -17,7 +17,7 @@ where
     S: Clone + Send + Sync + 'static,
 {
     /// Adds a route to the app for serving cached images.
-    /// Requires an axum State that contains the optimizer [`crate::ImageOptimizer`].
+    /// Requires an axum State that contains the optimizer [`ImageOptimizer`].
     ///
     /// ```
     /// use leptos_image::*;
@@ -47,8 +47,8 @@ where
     /// // Composite App State with the optimizer and leptos options.
     /// #[derive(Clone, axum::extract::FromRef)]
     /// struct AppState {
-    ///   leptos_options: leptos::LeptosOptions,
-    ///   optimizer: leptos_image::ImageOptimizer,
+    ///   leptos_options: LeptosOptions,
+    ///   optimizer: ImageOptimizer,
     /// }
     ///
     /// #[component]
@@ -111,8 +111,7 @@ async fn execute_file_handler(
 ) -> Result<Response<ServeFileSystemResponseBody>, Infallible> {
     let req = Request::builder()
         .uri(uri.clone())
-        .body(Body::empty())
-        .unwrap();
+        .body(Body::empty())?;
     ServeDir::new(root).oneshot(req).await
 }
 
@@ -143,7 +142,7 @@ async fn check_cache_image(
     add_file_to_cache(optimizer, cache_image).await;
 
     let uri_string = "/".to_string() + &file_path;
-    let maybe_uri = (uri_string).parse::<Uri>().ok();
+    let maybe_uri = uri_string.parse::<Uri>().ok();
 
     if let Some(uri) = maybe_uri {
         Ok(Some(uri))

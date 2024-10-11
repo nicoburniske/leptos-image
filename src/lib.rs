@@ -67,8 +67,8 @@
 //! // Composite App State with the optimizer and Leptos options.
 //! #[derive(Clone, axum::extract::FromRef)]
 //! struct AppState {
-//!     leptos_options: leptos::LeptosOptions,
-//!     optimizer: leptos_image::ImageOptimizer,
+//!     leptos_options: LeptosOptions,
+//!     optimizer: ImageOptimizer,
 //! }
 //!
 //! #[component]
@@ -109,9 +109,9 @@ mod routes;
 mod picture;
 
 pub use image::*;
+pub use optimizer::{Filter, Resize, ResizeType};
 #[cfg(feature = "ssr")]
-pub use optimizer::{ImageOptimizer};
-pub use optimizer::{Resize, ResizeType, Filter};
+pub use optimizer::ImageOptimizer;
 pub use provider::*;
 #[cfg(feature = "ssr")]
 pub use routes::*;

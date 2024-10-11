@@ -30,7 +30,7 @@ pub fn provide_image_context() {
         },
     );
 
-    leptos::provide_context(resource);
+    provide_context(resource);
 }
 
 type ImageResource = Resource<(), ImageConfig>;
