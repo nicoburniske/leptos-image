@@ -1,6 +1,6 @@
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use std::str::FromStr;
-use serde::{Deserialize, Serialize};
 
 /// ImageOptimizer enables image optimization and caching.
 #[cfg(feature = "ssr")]
@@ -161,12 +161,12 @@ where
 
     match config {
         CachedImageOption::Resize(Resize {
-            width,
-            height,
-            quality,
-            filter,
-            resize_type,
-        }) => {
+                                      width,
+                                      height,
+                                      quality,
+                                      filter,
+                                      resize_type,
+                                  }) => {
             let mut img = image::open(source_path)?;
             resize_type.resize(&mut img, width, height, filter);
 
@@ -267,7 +267,7 @@ pub(crate) enum CachedImageOption {
 /// Cover will first try to respect the original aspect ratio, then crop the image to fill the entire target size.
 /// Thumbnail respect the original aspect ratio and is usually faster than other algorithms to downsize an image. Do not use if the resizing is very similar to orignal image, this can create artifacts.
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
-pub enum ResizeType{
+pub enum ResizeType {
     #[default]
     Fit,
     Cover,
@@ -275,13 +275,13 @@ pub enum ResizeType{
 }
 
 #[cfg(feature = "ssr")]
-impl ResizeType{
+impl ResizeType {
     pub(crate) fn resize(&self, img: &mut image::DynamicImage, width: u32, height: u32, filter: Filter) {
-       match self {
-           ResizeType::Fit => {*img = img.resize_exact(width, height, filter.into())}
-           ResizeType::Cover => {*img = img.resize_to_fill(width, height, filter.into())}
-           ResizeType::Thumbnail => {*img = img.thumbnail(width, height)}
-       }
+        match self {
+            ResizeType::Fit => { *img = img.resize_exact(width, height, filter.into()) }
+            ResizeType::Cover => { *img = img.resize_to_fill(width, height, filter.into()) }
+            ResizeType::Thumbnail => { *img = img.thumbnail(width, height) }
+        }
     }
 }
 

@@ -8,8 +8,8 @@ use leptos::{component, view, AttributeValue, IntoView};
 #[component]
 pub fn Picture(
     /// Image source. Should be path relative to root.
-    #[prop(into)]///
-    src: String,///
+    #[prop(into)] ///
+    src: String, ///
     /// A rule that based on screen width and height will return a Resize struct.
     #[prop(into)] ruleset:
     fn(usize, usize) -> Resize,
@@ -28,8 +28,7 @@ pub fn Picture(
     /// Style class for image
     #[prop(into, optional)]
     class: Option<AttributeValue>,
-    ) -> impl IntoView {
-
+) -> impl IntoView {
     let screen = leptos::window();
     let screen_width = screen.inner_width().unwrap_or_default().as_f64().unwrap_or_default() as usize;
     let screen_height = screen.inner_height().unwrap_or_default().as_f64().unwrap_or_default() as usize;
@@ -39,7 +38,7 @@ pub fn Picture(
     let resize: String = rules.resize_type.to_string();
     let filter: String = rules.filter.to_string();
 
-    view!{
+    view! {
 
         <Image
             src=src

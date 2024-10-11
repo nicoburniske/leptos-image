@@ -110,6 +110,7 @@ mod picture;
 
 pub use image::*;
 pub use optimizer::{Filter, Resize, ResizeType};
+pub use picture::{Picture};
 #[cfg(feature = "ssr")]
 pub use optimizer::ImageOptimizer;
 pub use provider::*;

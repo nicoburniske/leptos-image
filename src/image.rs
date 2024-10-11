@@ -157,8 +157,8 @@ fn CacheImage(
                 format!("url('{}')", svg_url)
             }
         };
-        let style= format!(
-        "color:transparent;background-size:cover;background-position:50% 50%;background-repeat:no-repeat;background-image:{background_image};",
+        let style = format!(
+            "color:transparent;background-size:cover;background-position:50% 50%;background-repeat:no-repeat;background-image:{background_image};",
         );
 
         style
