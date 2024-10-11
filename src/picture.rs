@@ -11,8 +11,7 @@ pub fn Picture(
     #[prop(into)] ///
     src: String, ///
     /// A rule that based on screen width and height will return a Resize struct.
-    #[prop(into)] ruleset:
-    fn(usize, usize) -> Resize,
+    ruleset: fn(usize, usize) -> Resize,
     /// Will add blur image to head if true.
     #[prop(default = false)]
     blur: bool,
