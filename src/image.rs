@@ -24,7 +24,7 @@ pub fn Image<'a>(
     /// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
     #[prop(default = "catmullrom")]
     filter: &'a str,
-    /// Resize type for the conversion : Fit, Fill, Cover
+    /// Resize type for the conversion : Fit, Cover, Thumbnail
     #[prop(default = "fit")]
     resize_type: &'a str,
     /// Will add blur image to head if true.

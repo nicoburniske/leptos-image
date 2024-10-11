@@ -265,8 +265,8 @@ pub(crate) enum CachedImageOption {
 pub(crate) enum ResizeType{
     #[default]
     Fit,
-    Fill,
     Cover,
+    Thumbnail,
 }
 
 #[cfg(feature = "ssr")]
@@ -274,8 +274,8 @@ impl ResizeType{
     pub(crate) fn resize(&self, img: &mut image::DynamicImage, width: u32, height: u32, filter: Filter) {
        match self {
            ResizeType::Fit => {*img = img.resize_exact(width, height, filter.into())}
-           ResizeType::Fill => {*img = img.resize_to_fill(width, height, filter.into())}
-           ResizeType::Cover => {*img = img.thumbnail(width, height)}
+           ResizeType::Cover => {*img = img.resize_to_fill(width, height, filter.into())}
+           ResizeType::Thumbnail => {*img = img.thumbnail(width, height)}
        }
     }
 }
@@ -286,8 +286,8 @@ impl FromStr for ResizeType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "fit" => Ok(ResizeType::Fit),
-            "fill" => Ok(ResizeType::Fill),
             "cover" => Ok(ResizeType::Cover),
+            "thumbnail" => Ok(ResizeType::Thumbnail),
             _ => Err(()),
         }
     }
