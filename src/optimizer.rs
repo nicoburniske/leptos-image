@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use std::str::FromStr;
+use serde::{Deserialize, Serialize};
 
 /// ImageOptimizer enables image optimization and caching.
 #[cfg(feature = "ssr")]
@@ -446,7 +446,7 @@ where
     P: AsRef<std::ffi::OsStr>,
 {
     match std::path::Path::new(&path).parent() {
-        Some(p) if (!(p).exists()) => tokio::fs::create_dir_all(p),
+        Some(p) if (!(p).exists()) => std::fs::create_dir_all(p),
         Some(_) => Result::Ok(()),
         None => Result::Ok(()),
     }
