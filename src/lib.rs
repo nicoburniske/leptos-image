@@ -40,7 +40,7 @@
 //! Here’s how you can integrate the Image Optimizer into your Leptos application:
 //!
 //! ```
-//!     
+//!
 //! # use leptos_image::*;
 //! # use leptos::*;
 //! # use axum::*;
@@ -110,6 +110,7 @@ mod routes;
 pub use image::*;
 #[cfg(feature = "ssr")]
 pub use optimizer::ImageOptimizer;
+pub use optimizer::{Filter, ResizeType};
 pub use provider::*;
 #[cfg(feature = "ssr")]
 pub use routes::*;

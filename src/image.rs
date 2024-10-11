@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use crate::optimizer::*;
+use std::str::FromStr;
 
 use leptos::*;
 use leptos_meta::Link;
@@ -10,7 +10,7 @@ use leptos_meta::Link;
 /// Image component for rendering optimized static images.
 /// Images MUST be static. Will not work with dynamic images.
 #[component]
-pub fn Image<'a>(
+pub fn Image(
     /// Image source. Should be path relative to root.
     #[prop(into)]
     src: String,
@@ -22,11 +22,11 @@ pub fn Image<'a>(
     #[prop(default = 75_u8)]
     quality: u8,
     /// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
-    #[prop(default = "catmullrom")]
-    filter: &'a str,
+    #[prop(default = Filter::CatmullRom)]
+    filter: Filter,
     /// Resize type for the conversion : Fit, Fill, Cover
-    #[prop(default = "fit")]
-    resize_type: &'a str,
+    #[prop(default = ResizeType::Fit)]
+    resize_type: ResizeType,
     /// Will add blur image to head if true.
     #[prop(default = false)]
     blur: bool,
@@ -67,10 +67,10 @@ pub fn Image<'a>(
             src: src.clone(),
             option: CachedImageOption::Resize(Resize {
                 quality,
-                filter: filter.parse().unwrap_or_default(),
+                filter,
                 width,
                 height,
-                resize_type: resize_type.parse().unwrap_or_default(),
+                resize_type,
             }),
         }
     };
@@ -156,8 +156,8 @@ fn CacheImage(
                 format!("url('{}')", svg_url)
             }
         };
-        let style= format!(
-        "color:transparent;background-size:cover;background-position:50% 50%;background-repeat:no-repeat;background-image:{background_image};",
+        let style = format!(
+            "color:transparent;background-size:cover;background-position:50% 50%;background-repeat:no-repeat;background-image:{background_image};",
         );
 
         style
