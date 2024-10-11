@@ -265,8 +265,8 @@ pub(crate) enum CachedImageOption {
 pub enum ResizeType {
     #[default]
     Fit,
-    Fill,
     Cover,
+    Thumbnail,
 }
 
 #[cfg(feature = "ssr")]
@@ -274,24 +274,12 @@ impl ResizeType {
     pub(crate) fn resize(&self, img: &mut image::DynamicImage, width: u32, height: u32, filter: Filter) {
         match self {
             ResizeType::Fit => { *img = img.resize_exact(width, height, filter.into()) }
-            ResizeType::Fill => { *img = img.resize_to_fill(width, height, filter.into()) }
-            ResizeType::Cover => { *img = img.thumbnail(width, height) }
+            ResizeType::Cover => { *img = img.resize_to_fill(width, height, filter.into()) }
+            ResizeType::Thumbnail => { *img = img.thumbnail(width, height) }
         }
     }
 }
 
-impl FromStr for ResizeType {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "fit" => Ok(ResizeType::Fit),
-            "fill" => Ok(ResizeType::Fill),
-            "cover" => Ok(ResizeType::Cover),
-            _ => Err(()),
-        }
-    }
-}
 
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
 pub enum Filter {
@@ -316,20 +304,6 @@ impl From<Filter> for image::imageops::FilterType {
     }
 }
 
-impl FromStr for Filter {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "catmullrom" => Ok(Filter::CatmullRom),
-            "gaussian" => Ok(Filter::Gaussian),
-            "nearest" => Ok(Filter::Nearest),
-            "triangle" => Ok(Filter::Triangle),
-            "lanczos3" => Ok(Filter::Lanczos3),
-            _ => Err(()),
-        }
-    }
-}
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize, Hash)]
 #[serde(rename = "r")]
