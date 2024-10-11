@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
@@ -62,8 +63,8 @@ impl ImageOptimizer {
     /// // Composite App State with the optimizer and leptos options.
     /// #[derive(Clone, axum::extract::FromRef)]
     /// struct AppState {
-    ///   leptos_options: leptos::LeptosOptions,
-    ///   optimizer: leptos_image::ImageOptimizer,
+    ///   leptos_options: LeptosOptions,
+    ///   optimizer: ImageOptimizer,
     /// }
     ///
     /// #[component]
@@ -240,7 +241,7 @@ pub struct CachedImage {
     pub(crate) option: CachedImageOption,
 }
 
-impl std::fmt::Display for CachedImage {
+impl Display for CachedImage {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.option {
             CachedImageOption::Resize(resize) => write!(
@@ -261,8 +262,12 @@ pub(crate) enum CachedImageOption {
     Blur(Blur),
 }
 
+/// The type of resize.
+/// Fit will respect the original aspect ratio.
+/// Cover will first try to respect the original aspect ratio, then crop the image to fill the entire target size.
+/// Thumbnail respect the original aspect ratio and is usually faster than other algorithms to downsize an image. Do not use if the resizing is very similar to orignal image, this can create artifacts.
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
-pub(crate) enum ResizeType{
+pub enum ResizeType{
     #[default]
     Fit,
     Cover,
@@ -293,8 +298,21 @@ impl FromStr for ResizeType {
     }
 }
 
+impl Display for ResizeType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ResizeType::Fit => write!(f, "fit"),
+            ResizeType::Cover => write!(f, "cover"),
+            ResizeType::Thumbnail => write!(f, "thumbnail"),
+        }
+    }
+}
+
+/// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
+/// Default to CatmullRom
+/// Lanczos3 is a solid option
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
-pub(crate) enum Filter {
+pub enum Filter {
     #[default]
     CatmullRom,
     Gaussian,
@@ -331,9 +349,21 @@ impl FromStr for Filter {
     }
 }
 
+impl Display for Filter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Filter::CatmullRom => write!(f, "catmullRom"),
+            Filter::Gaussian => write!(f, "gaussian"),
+            Filter::Nearest => write!(f, "nearest"),
+            Filter::Triangle => write!(f, "triangle"),
+            Filter::Lanczos3 => write!(f, "lanczos3"),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize, Hash)]
 #[serde(rename = "r")]
-pub(crate) struct Resize {
+pub struct Resize {
     #[serde(rename = "w")]
     pub width: u32,
     #[serde(rename = "h")]
@@ -446,9 +476,9 @@ where
     P: AsRef<std::ffi::OsStr>,
 {
     match std::path::Path::new(&path).parent() {
-        Some(p) if (!(p).exists()) => std::fs::create_dir_all(p),
-        Some(_) => Result::Ok(()),
-        None => Result::Ok(()),
+        Some(p) if !(p).exists() => std::fs::create_dir_all(p),
+        Some(_) => Ok(()),
+        None => Ok(()),
     }
 }
 
@@ -474,7 +504,7 @@ mod optimizer_tests {
         let decoded: CachedImage = CachedImage::from_url_encoded(&encoded).unwrap();
 
         dbg!(encoded);
-        assert!(img == decoded);
+        assert_eq!(img, decoded);
     }
 
     const TEST_IMAGE: &str = "./example/start-axum/public/cute_ferris.png";

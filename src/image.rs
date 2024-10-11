@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use crate::optimizer::*;
 
 use leptos::*;
@@ -14,9 +13,9 @@ pub fn Image<'a>(
     /// Image source. Should be path relative to root.
     #[prop(into)]
     src: String,
-    /// Resize image height, but will still maintain the same aspect ratio.
+    /// Resize image height.
     height: u32,
-    /// Resize image width, but will still maintain the same aspect ratio.
+    /// Resize image width.
     width: u32,
     /// Image quality. 0-100.
     #[prop(default = 75_u8)]
