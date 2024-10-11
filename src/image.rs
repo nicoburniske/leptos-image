@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use crate::optimizer::*;
 
 use leptos::*;
@@ -21,11 +22,11 @@ pub fn Image(
     #[prop(default = 75_u8)]
     quality: u8,
     /// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
-    #[prop(default = Filter::CatmullRom)]
-    filter: Filter,
+    #[prop(default = "catmullrom")]
+    filter: impl Into<Filter>,
     /// Resize type for the conversion : Fit, Fill, Cover
-    #[prop(default = ResizeType::Fit)]
-    resize_type: ResizeType,
+    #[prop(default = "fit")]
+    resize_type: impl Into<ResizeType>,
     /// Will add blur image to head if true.
     #[prop(default = false)]
     blur: bool,

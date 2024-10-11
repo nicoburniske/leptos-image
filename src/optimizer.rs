@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
 /// ImageOptimizer enables image optimization and caching.
@@ -279,6 +280,19 @@ impl ResizeType{
     }
 }
 
+impl FromStr for ResizeType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "fit" => Ok(ResizeType::Fit),
+            "fill" => Ok(ResizeType::Fill),
+            "cover" => Ok(ResizeType::Cover),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
 pub(crate) enum Filter {
     #[default]
@@ -302,6 +316,20 @@ impl From<Filter> for image::imageops::FilterType {
     }
 }
 
+impl FromStr for Filter {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "catmullrom" => Ok(Filter::CatmullRom),
+            "gaussian" => Ok(Filter::Gaussian),
+            "nearest" => Ok(Filter::Nearest),
+            "triangle" => Ok(Filter::Triangle),
+            "lanczos3" => Ok(Filter::Lanczos3),
+            _ => Err(()),
+        }
+    }
+}
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize, Hash)]
 #[serde(rename = "r")]
