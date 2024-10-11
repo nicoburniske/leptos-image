@@ -267,7 +267,7 @@ pub(crate) enum CachedImageOption {
 /// Cover will first try to respect the original aspect ratio, then crop the image to fill the entire target size.
 /// Thumbnail respect the original aspect ratio and is usually faster than other algorithms to downsize an image. Do not use if the resizing is very similar to orignal image, this can create artifacts.
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
-pub enum ResizeType {
+pub(crate) enum ResizeType {
     #[default]
     Fit,
     Cover,
@@ -298,21 +298,11 @@ impl FromStr for ResizeType {
     }
 }
 
-impl Display for ResizeType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ResizeType::Fit => write!(f, "fit"),
-            ResizeType::Cover => write!(f, "cover"),
-            ResizeType::Thumbnail => write!(f, "thumbnail"),
-        }
-    }
-}
-
 /// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
 /// Default to CatmullRom
 /// Lanczos3 is a solid option
 #[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
-pub enum Filter {
+pub(crate) enum Filter {
     #[default]
     CatmullRom,
     Gaussian,
@@ -349,21 +339,9 @@ impl FromStr for Filter {
     }
 }
 
-impl Display for Filter {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Filter::CatmullRom => write!(f, "catmullRom"),
-            Filter::Gaussian => write!(f, "gaussian"),
-            Filter::Nearest => write!(f, "nearest"),
-            Filter::Triangle => write!(f, "triangle"),
-            Filter::Lanczos3 => write!(f, "lanczos3"),
-        }
-    }
-}
-
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize, Hash)]
 #[serde(rename = "r")]
-pub struct Resize {
+pub(crate) struct Resize {
     #[serde(rename = "w")]
     pub width: u32,
     #[serde(rename = "h")]
@@ -476,7 +454,7 @@ where
     P: AsRef<std::ffi::OsStr>,
 {
     match std::path::Path::new(&path).parent() {
-        Some(p) if !(p).exists() => std::fs::create_dir_all(p),
+        Some(p) if !p.exists() => std::fs::create_dir_all(p),
         Some(_) => Ok(()),
         None => Ok(()),
     }

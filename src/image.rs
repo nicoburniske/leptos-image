@@ -187,6 +187,13 @@ fn CacheImage(
 
 
 
+pub struct Ruleset{
+    pub width: u32,
+    pub height: u32,
+    pub quality: u8,
+    pub filter: String,
+    pub resize_type: String,
+}
 /// Picture component for rendering optimized static images.
 /// Images MUST be static. Will not work with dynamic images.
 /// Will resize an image based on rules and dimensions.
@@ -196,7 +203,7 @@ pub fn Picture(
     #[prop(into)] ///
     src: String, ///
     /// A rule that based on screen width and height will return a Resize struct.
-    ruleset: fn(usize, usize) -> Resize,
+    ruleset: fn(usize, usize) -> Ruleset,
     /// Will add blur image to head if true.
     #[prop(default = false)]
     blur: bool,
@@ -219,8 +226,7 @@ pub fn Picture(
 
     let rules = ruleset(screen_width, screen_height);
 
-    let resize: String = rules.resize_type.to_string();
-    let filter: String = rules.filter.to_string();
+
 
     view! {
 
@@ -234,8 +240,8 @@ pub fn Picture(
             width=rules.width
             height=rules.height
             quality=rules.quality
-            resize_type=&resize
-            filter=&filter
+            resize_type=&rules.resize_type
+            filter=&rules.filter
         />
     }
 }

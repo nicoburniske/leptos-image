@@ -108,7 +108,6 @@ mod provider;
 mod routes;
 
 pub use image::*;
-pub use optimizer::{Filter, Resize, ResizeType};
 #[cfg(feature = "ssr")]
 pub use optimizer::ImageOptimizer;
 pub use provider::*;
