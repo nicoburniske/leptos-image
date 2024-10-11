@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
 /// ImageOptimizer enables image optimization and caching.
