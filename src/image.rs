@@ -20,6 +20,12 @@ pub fn Image(
     /// Image quality. 0-100.
     #[prop(default = 75_u8)]
     quality: u8,
+    /// Filter type for the conversion : Nearest, Triangle, CatmullRom, Gaussian, Lanczos3
+    #[prop(default = Filter::CatmullRom)]
+    filter: Filter,
+    /// Resize type for the conversion : Fit, Fill, Cover
+    #[prop(default = ResizeType::Fit)]
+    resize_type: ResizeType,
     /// Will add blur image to head if true.
     #[prop(default = false)]
     blur: bool,
@@ -60,8 +66,10 @@ pub fn Image(
             src: src.clone(),
             option: CachedImageOption::Resize(Resize {
                 quality,
+                filter: filter.into(),
                 width,
                 height,
+                resize_type: resize_type.into(),
             }),
         }
     };

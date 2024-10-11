@@ -162,16 +162,14 @@ where
             width,
             height,
             quality,
+            filter,
+            resize_type,
         }) => {
-            let img = image::open(source_path)?;
-            let new_img = img.resize(
-                width,
-                height,
-                // Cubic Filter.
-                image::imageops::FilterType::CatmullRom,
-            );
+            let mut img = image::open(source_path)?;
+            resize_type.resize(&mut img, width, height, filter);
+
             // Create the WebP encoder for the above image
-            let encoder: Encoder = Encoder::from_image(&new_img).unwrap();
+            let encoder: Encoder = Encoder::from_image(&img).unwrap();
             // Encode the image at a specified quality 0-100
             let webp: WebPMemory = encoder.encode(quality as f32);
             create_nested_if_needed(&save_path)?;
@@ -221,12 +219,12 @@ where
     let svg = format!(
         r#"
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 {svg_width} {svg_height}" preserveAspectRatio="none">
-    <filter id="a" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> 
-        <feGaussianBlur stdDeviation="{sigma}" edgeMode="duplicate"/> 
+    <filter id="a" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feGaussianBlur stdDeviation="{sigma}" edgeMode="duplicate"/>
         <feComponentTransfer>
-            <feFuncA type="discrete" tableValues="1 1"/> 
-        </feComponentTransfer> 
-    </filter> 
+            <feFuncA type="discrete" tableValues="1 1"/>
+        </feComponentTransfer>
+    </filter>
     <image filter="url(#a)" x="0" y="0" height="100%" width="100%" href="{uri}"/>
 </svg>
 "#,
@@ -262,6 +260,49 @@ pub(crate) enum CachedImageOption {
     Blur(Blur),
 }
 
+#[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
+pub(crate) enum ResizeType{
+    #[default]
+    Fit,
+    Fill,
+    Cover,
+}
+
+#[cfg(feature = "ssr")]
+impl ResizeType{
+    pub(crate) fn resize(&self, img: &mut image::DynamicImage, width: u32, height: u32, filter: Filter) {
+       match self {
+           ResizeType::Fit => {*img = img.resize_exact(width, height, filter.into())}
+           ResizeType::Fill => {*img = img.resize_to_fill(width, height, filter.into())}
+           ResizeType::Cover => {*img = img.thumbnail(width, height)}
+       }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Default, Eq, Deserialize, Serialize, Hash)]
+pub(crate) enum Filter {
+    #[default]
+    CatmullRom,
+    Gaussian,
+    Nearest,
+    Triangle,
+    Lanczos3,
+}
+
+#[cfg(feature = "ssr")]
+impl From<Filter> for image::imageops::FilterType {
+    fn from(value: Filter) -> Self {
+        match value {
+            Filter::CatmullRom => image::imageops::FilterType::CatmullRom,
+            Filter::Gaussian => image::imageops::FilterType::Gaussian,
+            Filter::Nearest => image::imageops::FilterType::Nearest,
+            Filter::Triangle => image::imageops::FilterType::Triangle,
+            Filter::Lanczos3 => image::imageops::FilterType::Lanczos3,
+        }
+    }
+}
+
+
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize, Hash)]
 #[serde(rename = "r")]
 pub(crate) struct Resize {
@@ -271,6 +312,10 @@ pub(crate) struct Resize {
     pub height: u32,
     #[serde(rename = "q")]
     pub quality: u8,
+    #[serde(rename = "f")]
+    pub filter: Filter,
+    #[serde(rename = "t")]
+    pub resize_type: ResizeType,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize, Hash)]
@@ -392,6 +437,8 @@ mod optimizer_tests {
                 quality: 75,
                 width: 100,
                 height: 100,
+                filter: Filter::CatmullRom,
+                resize_type: ResizeType::Fit,
             }),
         };
 
@@ -472,6 +519,8 @@ mod optimizer_tests {
                 quality: 75,
                 width: 100,
                 height: 100,
+                filter: Filter::CatmullRom,
+                resize_type: ResizeType::Fit,
             }),
         };
 
