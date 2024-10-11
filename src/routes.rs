@@ -111,7 +111,8 @@ async fn execute_file_handler(
 ) -> Result<Response<ServeFileSystemResponseBody>, Infallible> {
     let req = Request::builder()
         .uri(uri.clone())
-        .body(Body::empty())?;
+        .body(Body::empty())
+        .unwrap_or_default();
     ServeDir::new(root).oneshot(req).await
 }
 
