@@ -119,6 +119,8 @@ pub fn Image<'a>(
                                     decoding="async"
                                     loading=loading
                                     src=opt_image
+                                    width=width
+                                    height=height
                                 />
                             }
                                 .into_view()
