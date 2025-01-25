@@ -11,16 +11,16 @@ readme = "README.md"
 repository = "https://github.com/nicoburniske/leptos-image"
 
 [dependencies]
-leptos = { version = "0.6", default-features = false }
-leptos_router = { version = "0.6", default-features = false }
-leptos_meta = { version = "0.6", default-features = false }
+leptos = { version = "0.7.4", default-features = false }
+leptos_router = { version = "0.7.4", default-features = false }
+leptos_meta = { version = "0.7.4", default-features = false }
 
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", optional = true, features = ["HtmlImageElement"]}
 
 tokio = { version = "1", features = ["rt-multi-thread", "rt", "fs"], optional = true }
 axum = { version = "0.7", optional = true, features = ["macros"] }
-tower = { version = "0.4", optional = true }
+tower = { version = "0.4", optional = true, features = ["util"] }
 tower-http = { version = "0.5", features = ["fs"], optional = true }
 
 image = { version = "0.24", optional = true}
@@ -34,12 +34,12 @@ dashmap = { version = "5", optional = true }
 
 [features]
 ssr = [ 
-    "leptos_router/ssr", "leptos_meta/ssr" , "leptos/ssr",
+    "leptos_meta/ssr" , "leptos/ssr",
     "dep:webp", "dep:image", 
     "dep:tokio", "dep:axum", "dep:tower", "dep:tower-http",
     "dep:tracing", "dep:dashmap", "dep:thiserror"
 ]
-hydrate = [ "dep:web-sys","leptos/hydrate", "leptos_router/hydrate" ]
+hydrate = [ "dep:web-sys","leptos/hydrate" ]
 
 [dev-dependencies]
-leptos_axum = "0.6.5"
+leptos_axum = "0.7.4"

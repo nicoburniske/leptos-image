@@ -73,7 +73,7 @@ impl ImageOptimizer {
     pub fn provide_context(&self) -> impl Fn() + 'static + Clone + Send {
         let optimizer = self.clone();
         move || {
-            leptos::provide_context(optimizer.clone());
+            leptos::prelude::provide_context(optimizer.clone());
         }
     }
 

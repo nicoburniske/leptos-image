@@ -1,5 +1,6 @@
+use leptos::logging::log;
 use crate::optimizer::CachedImage;
-use leptos::*;
+use leptos::prelude::*;
 
 /// Provides Image Cache Context so that Images can use their blur placeholders if they exist.
 ///
@@ -21,19 +22,21 @@ use leptos::*;
 ///
 /// ```
 pub fn provide_image_context() {
-    let resource: ImageResource = create_blocking_resource(
+    let resource: Resource<ImageConfig> = Resource::new_blocking(
         || (),
         |_| async {
+            log!("Calling");
             get_image_config()
                 .await
                 .expect("Failed to retrieve image cache")
         },
     );
 
-    leptos::provide_context(resource);
+
+    leptos::prelude::provide_context(resource);
 }
 
-type ImageResource = Resource<(), ImageConfig>;
+type ImageResource = Resource<ImageConfig>;
 
 #[doc(hidden)]
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -42,13 +45,15 @@ pub struct ImageConfig {
     pub(crate) cache: Vec<(CachedImage, String)>,
 }
 
-pub(crate) fn use_image_cache_resource() -> ImageResource {
-    use_context::<ImageResource>().expect("Missing Image Resource")
+pub(crate) fn use_image_cache_resource() -> Resource<ImageConfig> {
+    use_context::<Resource<ImageConfig>>().expect("Missing Image Resource")
 }
 
 #[server(GetImageCache)]
 pub(crate) async fn get_image_config() -> Result<ImageConfig, ServerFnError> {
+    tracing::info!("1");
     let optimizer = use_optimizer()?;
+    tracing::info!("2");
 
     let cache = optimizer
         .cache
@@ -66,6 +71,7 @@ pub(crate) async fn get_image_config() -> Result<ImageConfig, ServerFnError> {
 
 #[cfg(feature = "ssr")]
 pub(crate) fn use_optimizer() -> Result<crate::ImageOptimizer, ServerFnError> {
+    tracing::debug!("Calling use_optimizer");
     use_context::<crate::ImageOptimizer>()
         .ok_or_else(|| ServerFnError::ServerError("Image Optimizer Missing.".into()))
 }

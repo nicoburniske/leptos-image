@@ -7,7 +7,7 @@ use axum::{
     response::IntoResponse,
 };
 use std::convert::Infallible;
-use tower::ServiceExt;
+use tower::util::ServiceExt;
 use tower_http::services::fs::ServeFileSystemResponseBody;
 use tower_http::services::ServeDir;
 
@@ -47,7 +47,7 @@ where
     /// // Composite App State with the optimizer and leptos options.
     /// #[derive(Clone, axum::extract::FromRef)]
     /// struct AppState {
-    ///   leptos_options: leptos::LeptosOptions,
+    ///   leptos_options: leptos::prelude::LeptosOptions,
     ///   optimizer: leptos_image::ImageOptimizer,
     /// }
     ///
